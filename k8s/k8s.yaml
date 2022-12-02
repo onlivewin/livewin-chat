@@ -1,0 +1,140 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: crab-broker
+spec:
+  selector:
+    matchLabels:
+      app: crab-broker
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: crab-broker
+    spec:
+      containers:
+        - name: crab-broker
+          image: wida/broker:1.0.10
+          command: ["./broker"]
+          args: ["-p", "80","-r","crab-discovery-svc:9655"]
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6365
+              name:  grpc
+            - containerPort: 80
+              name:  websocket
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: crab-broker-grpc-svc
+spec:
+  selector:
+    app: crab-broker
+  ports:
+    - port: 6365
+      targetPort: 6365
+      name: grpc
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: crab-broker-svc
+spec:
+  selector:
+    app: crab-broker
+  ports:
+    - port: 80
+      targetPort: 80
+      name: websocket  
+  type: LoadBalancer      
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: crab-publisher-api
+spec:
+  selector:
+    matchLabels:
+      app: crab-publisher-api
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: crab-publisher-api
+    spec:
+      containers:
+        - name: crab-publisher-api
+          image: wida/publisher_api:1.0.10
+          command: ["./publisher_api"]
+          args: ["-p", "80","-r","crab-discovery-svc:9655"]
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: crab-publisher-api-svc
+spec:
+  selector:
+    app: crab-publisher-api
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: crab-publisher-api-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: crab.wida.cool
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: crab-publisher-api-svc
+            port:
+              number: 80
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: crab-discovery
+spec:
+  selector:
+    matchLabels:
+      app: crab-discovery
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: crab-discovery
+    spec:
+      containers:
+        - name: crab-discovery
+          image: wida/discovery:1.0.10
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9655
+              name:  grpc
+              protocol: UDP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: crab-discovery-svc
+spec:
+  selector:
+    app: crab-discovery
+  ports:
+    - port: 9655
+      targetPort: 9655
+      protocol: UDP
+      name: http              

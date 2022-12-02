@@ -1,0 +1,11 @@
+FROM wida/gobase:latest 
+
+COPY ./target/broker /app/
+COPY tls /app/tls
+WORKDIR /app
+
+EXPOSE 6365
+EXPOSE 80
+EXPOSE 443
+
+ENTRYPOINT ["./broker"]

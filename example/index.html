@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>crab js client demo</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='main.js'></script>
+</head>
+
+<body>
+    <div>
+        <p>curl -d 'id message' 'http://localhost:9653/pushmsg?ids=no578999'</p>
+        <p>curl -d 'broadcast in channel message' 'http://localhost:9653/broadcastinchannel?channel=channel1'</p>
+        <p>curl -d 'broadcast message' 'http://localhost:9653/broadcast'</p>
+
+        <!-- <p>curl -d 'id message' 'http://crab.wida.cool/pushmsg?ids=no578999'</p>
+        <p>curl -d 'broadcast in channel message' 'http://crab.wida.cool/broadcastinchannel?channel=channel1'</p>
+        <p>curl -d 'broadcast message' 'http://crab.wida.cool/broadcast'</p> -->
+    </div>
+    <div id="messages"></div>
+</body>
+
+</html>

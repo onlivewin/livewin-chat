@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package hairy_carb.broker;
+
+option go_package = "github.com/widaT/livewin-chat/pkg/proto/broker;broker";
+
+message Proto {
+    bytes body = 1;
+}
+
+// message PushMsgReq {
+//     repeated string keys = 1;
+//     Proto proto = 2;
+// }
+
+// message PushMsgReply {}
+
+message BroadcastReq{
+    Proto proto = 1;
+}
+
+message BroadcastReply{}
+
+message BroadcastChannelReq {
+    string channelID = 1;
+    Proto proto = 2;
+}
+
+message BroadcastChannelReply{}
+
+message ChannelsReq{}
+
+message ChannelsReply {
+     repeated string channels = 1;
+}
+
+service Broker { 
+    //rpc PushMsg(PushMsgReq) returns (PushMsgReply);
+    rpc Broadcast(BroadcastReq) returns (BroadcastReply);
+    rpc BroadcastInGroup(BroadcastChannelReq) returns (BroadcastChannelReply);
+    rpc Channels(ChannelsReq) returns (ChannelsReply);
+}

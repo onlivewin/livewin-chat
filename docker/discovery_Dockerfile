@@ -1,0 +1,8 @@
+FROM wida/gobase:latest 
+
+COPY ./target/discovery /app/
+WORKDIR /app
+
+EXPOSE  9655/udp
+
+ENTRYPOINT ["./discovery"]

@@ -1,0 +1,8 @@
+FROM wida/gobase:latest 
+
+COPY ./target/publisher_api /app/
+WORKDIR /app
+
+EXPOSE 80
+
+ENTRYPOINT ["./publisher_api"]
